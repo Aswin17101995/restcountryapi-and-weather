@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css" integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <style>
+        .card {
+  box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+  transition: 0.3s;
+  margin:20px;
+ height: 450px;
+}
+
+
+.card:hover {
+  box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+}
+.card-header{
+    background-color: black;
+    color: white;
+
+}
+ 
+
+h3{
+    text-align: center;
+    justify-content: center;
+}
+
+#innerpart{
+    text-align: center;
+    background-color:lightblue;
+    color: white;
+}
+.card-img-top {
+    width: 100%;
+    height: 10vw;
+    object-fit: scale-down;
+}
+
+    </style>
+</head>
+<body>
+    <script>
+            var div=document.createElement("div");
+            div.setAttribute("class","container");
+            div.setAttribute("id","mainhtml");
+            document.body.append(div);
+             var data=fetch("https://restcountries.eu/rest/v2/all").then(response=>{
+                 return response.json();
+             }).then(response=>{
+                processdata(response);
+
+             }).catch(function(err){
+                 console.log(err);
+             })
+            console.log(data);
+
+             function processdata(x)
+             {
+                 console.log(x);
+                 for(var i=0;i<x.length;i=i+3)
+                 {  
+                    var row=document.createElement("div");
+                         row.setAttribute("class","row");
+                         var temp=i;
+                      
+                            for(var j=1;j<=3;j++)
+                              {
+                                  if(temp<x.length)
+                                  { 
+                                    var col=document.createElement("div");
+                                    col.setAttribute("class","col-4");
+                                    
+                                    var obj=createcard(x[temp]);
+                                    col.append(obj);
+                                    row.append(col);
+                                    temp++;
+
+                                  }
+                                  else
+                                  {
+                                      break;
+                                  }
+                                    
+                                }
+                        
+                        
+                    
+                     document.getElementById("mainhtml").append(row);
+                 }
+             }
+             function createcard(x){
+                 var c=document.createElement("div");
+                 c.setAttribute("class","card");
+                 var img=document.createElement("img");
+                 img.setAttribute("class","card-img-top")
+                 img.setAttribute("src",x.flag);
+                 var cd=document.createElement("div");
+                 cd.setAttribute("class","card-body");
+                 cd.setAttribute("id","innerpart");
+                 var h=document.createElement("h3");
+                 h.setAttribute("class","card-header")
+                 h.innerHTML=x.name;
+                 var h5=document.createElement("h6");
+                 h5.innerHTML="REGION :"+x.region;
+                 var h6=document.createElement("h6");
+                 h6.innerHTML="CAPITAL :"+x.capital;
+                 var code=document.createElement("h6");
+                 code.innerHTML="COUNTRY CODE :"+x.alpha3Code;
+                 var weather=document.createElement("button");
+                 
+                 weather.setAttribute("class","btn btn-primary"); 
+                 weather.innerHTML="Click for Weather";
+                 weather.addEventListener("click",function()
+                 {
+                    processweather(x);
+                 });
+                 cd.append(h5,h6,code,weather);
+                 c.append(h,img,cd);
+                 return c;
+                
+             }
+          
+             function processweather(id)
+             {
+                var str="http://api.openweathermap.org/data/2.5/weather?lat=";
+                var lat=id.latlng[0];
+                str+=lat;
+                str+="&lon=";
+                var lng=id.latlng[1];
+                str+=lng;
+                str+="&appid=d3071eae7af8c0fb2cc5be8cb7e82bac";
+                console.log(lat,lng);
+                console.log(str);
+
+                var dataw=fetch(str).then(response=>{
+                 return response.json();
+             }).then(response=>{
+               console.log(response);
+               console.log(response.name);
+               console.log(response.main.feels_like);
+               var celcius=parseInt(response.main.feels_like)-273;
+                alert("Temperature : "+celcius+" deg celcius");
+             }).catch(function(err){
+                 console.log(err);
+             })
+             }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-Piv4xVNRyMGpqkS2by6br4gNJ7DXjqk09RmUpJ8jgGtD7zP9yug3goQfGII0yAns" crossorigin="anonymous"></script>
+</body>
+</html>
